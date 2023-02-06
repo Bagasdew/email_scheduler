@@ -3,6 +3,7 @@ import datetime
 import json
 import time
 import atexit
+from http import client
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -17,19 +18,12 @@ def hello_world():
 @app.route('/save_emails', methods=['POST'])
 def save_emails():
     payload = json.loads(request.data)
-    insert_schedule(payload)
-    return "success"
+    try:
+        insert_schedule(payload)
+    except Exception as e:
+        return 'invalid payload : '+str(e),400
+    return '',201
 
-def get_scheduled_email(conn):
-    current_time = datetime.datetime.now()
-    cur = conn.cursor()
-    cur.execute('Select * from email_schedule where status = 0 and scheduled_at <= ?',current_time)
-    rows = cur.fetchall()
-    for x in rows :
-        print(x)
-
-    return None
- 
 
 scheduler = BackgroundScheduler()
 scheduler.add_job(func=send_email, trigger="interval", seconds=10)

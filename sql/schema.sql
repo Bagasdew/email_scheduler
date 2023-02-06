@@ -1,8 +1,9 @@
 DROP TABLE IF EXISTS email_schedule;
+DROP TABLE IF EXISTS email_recipient;
 
 create table email_schedule
 (
-	id int,
+	id varchar(40),
 	subject varchar(100) not null,
 	body text,
 	status int,
